@@ -40,7 +40,7 @@ from user_agents import parse
 
 #Load the files
 
-df = pd.read_table('input_data', header=None)
+df = pd.read_table('resources/input_data', header=None)
 df.columns = ["date", "time", "user_id", "url", "IP", "user_agent_string"]
 
 unduplicated_df = df.drop_duplicates()
