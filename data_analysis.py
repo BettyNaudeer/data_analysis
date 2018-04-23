@@ -49,7 +49,7 @@ unduplicated_df = df.drop_duplicates()
 # ### Top 5 Countries based on number of events
 # ### Top 5 Cities based on number of events
 
-reader = geoip2.database.Reader('./GeoLite2_DB/GeoLite2-City.mmdb')
+reader = geoip2.database.Reader('./resources/GeoLite2_DB/GeoLite2-City.mmdb')
 
 ip_facts = []
 
