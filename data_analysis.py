@@ -2,7 +2,7 @@
 # coding: utf-8
 
 # Create a service that reads the raw gzip files from the input directory.
-# 
+#
 # The service should:
 # - Load the files
 # - Parse the data
@@ -10,28 +10,26 @@
 # - Parse user agent string and detect:
 #     - browser family
 #     - os family
-# 
+#
 # The service should print to standard out:
 # - Top 5 Countries based on number of events
 # - Top 5 Cities based on number of events
 # - Top 5 Browsers based on number of unique users
 # - Top 5 Operating systems based on number of unique users
-# 
-# 
-# 
+#
+#
+#
 # Note: The raw files will be provided by us and will be compressed using gzip and are tab separated (“tsv”)
 # field header (date, time, user_id, url, IP, user_agent_string)
 # url is hashed and has the structure of: “http://hashed_domain/hashed_path”
-# 
-# 
+#
+#
 # You can use any module or your own algorithms to perform processing such as:
 # to derive geographical data
 # to parse the user agent string
 # to connect to databases
-# 
-# 
-
-# In[4]:
+#
+#
 
 
 import pandas as pd
@@ -40,18 +38,10 @@ import geoip2.database
 from geoip2.errors import AddressNotFoundError
 from user_agents import parse
 
-
-# In[5]:
-
-
 #Load the files
 
 df = pd.read_table('input_data', header=None)
 df.columns = ["date", "time", "user_id", "url", "IP", "user_agent_string"]
-
-
-# In[6]:
-
 
 unduplicated_df = df.drop_duplicates()
 
@@ -59,11 +49,7 @@ unduplicated_df = df.drop_duplicates()
 # ### Top 5 Countries based on number of events
 # ### Top 5 Cities based on number of events
 
-# In[7]:
-
-
-
-reader = geoip2.database.Reader('./GeoLite2-City_20180403/GeoLite2-City.mmdb')
+reader = geoip2.database.Reader('./GeoLite2-City.mmdb')
 
 ip_facts = []
 
@@ -73,15 +59,15 @@ for IP in unduplicated_df['IP']:
         response = reader.city(first_ip)
         country = response.country.name
         city = response.city.name
-    
+
     except AddressNotFoundError:
         pass
-        
+
     except:
         pass
-        
+
     ip_facts.append([country, city])
-    
+
 reader.close()
 
 ip_facts_np = pd.DataFrame(ip_facts, columns= ['Country','City'])
@@ -95,18 +81,10 @@ print(ip_facts_np.Country.value_counts().nlargest(5))
 ### Top 5 Cities based on number of events
 print(ip_facts_np.City.value_counts().nlargest(5))
 
-
-# In[8]:
-
-
 unduplicated_df.head()
 
 
 # ### Top 5 Browsers based on number of unique users
-
-# In[10]:
-
-
 user_details = []
 
 for x in unduplicated_df['user_agent_string']:
@@ -120,16 +98,11 @@ print(user_agent_facts_np.Browser.value_counts().nlargest(5))
 
 
 # ### Top 5 Operating systems based on number of unique users
-
-# In[11]:
-
-
 user_details = []
 
 for x in unduplicated_df['user_agent_string']:
     user_details.append([x])
 
-    
 user_OS_pd = pd.DataFrame(user_details, columns = ['Details'])
 
 user_agents = []
@@ -143,4 +116,3 @@ for x in user_OS_pd['Details']:
 OS_pd = pd.DataFrame(user_agents, columns = ['OS'])
 
 print(OS_pd.OS.value_counts().nlargest(5))
-
